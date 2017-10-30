@@ -27,13 +27,13 @@ public class SimpleHttpClient {
         this.httpClient = HttpClientBuilder.create().build();
     }
 
-    public <T> void doPost(T entity, String endpoint) throws IOException {
+    public <T> void doPost(T entity, ContentType contentType, String endpoint) throws IOException {
         String jsonEntity = JSON.toJSONString(entity);
 
         HttpPost postRequest = new HttpPost(baseUri + endpoint);
 
         StringEntity input = new StringEntity(jsonEntity);
-        input.setContentType("application/json");
+        input.setContentType(contentType.value());
         postRequest.setEntity(input);
 
         HttpResponse response = httpClient.execute(postRequest);
@@ -43,8 +43,17 @@ public class SimpleHttpClient {
         }
     }
 
-    private class TestObject {
-        int i = 10;
-        String string = "string";
+    public enum ContentType {
+        JSON("application/json"), PLAIN_TEXT("text/plain");
+
+        private String contentTypeString;
+
+        ContentType(String contentTypeString) {
+            this.contentTypeString = contentTypeString;
+        }
+
+        public String value() {
+            return contentTypeString;
+        }
     }
 }

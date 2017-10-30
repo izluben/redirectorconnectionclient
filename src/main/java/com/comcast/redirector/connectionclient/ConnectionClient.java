@@ -12,6 +12,8 @@ import com.comcast.redirector.httpclient.SimpleHttpClient;
 
 import java.util.concurrent.ExecutorService;
 
+import static com.comcast.redirector.httpclient.SimpleHttpClient.ContentType.*;
+
 public class ConnectionClient {
 
     private final ServiceInstanceInfo serviceInstanceInfo;
@@ -32,9 +34,19 @@ public class ConnectionClient {
     public void advertiseAvailability() {
         registrationInfo = new RegistrationInfo(serviceInstanceInfo, config.getConnectionMode(), System.nanoTime());
         try {
-            simpleHttpClient.doPost(registrationInfo, config.getRegistrationEndpoint());
+            simpleHttpClient.doPost(registrationInfo, JSON, config.getRegistrationEndpoint());
         } catch (Exception e) {
             //doing retry here
         }
     }
+
+    public void deadvertiseAvailability() {
+        try {
+            simpleHttpClient.doPost(registrationInfo.getRegistrationId(), PLAIN_TEXT, config.getDeregistrationEndpoint());
+        } catch (Exception e) {
+            //doing retry here
+        }
+    }
+
+
 }
